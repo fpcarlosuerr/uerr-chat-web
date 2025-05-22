@@ -28,7 +28,7 @@ Thumbs.db
 # Credenciais (não colocar chaves diretamente no código)
 *.env
 *.secret
-
+../.env
 # pip
 pip-log.txt
 
