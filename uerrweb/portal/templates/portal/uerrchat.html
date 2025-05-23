@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat com GPT</title>
+    
+    <script>
+        console.log("aqui");
+        async function enviarMensagem() {
+            const input = document.getElementById("mensagem");
+            const texto = input.value;
+
+            const respostaDiv = document.getElementById("resposta");
+            respostaDiv.innerHTML += "<p><strong>Você:</strong> ${texto}</p>";
+
+            const resposta = await fetch("/chat/api/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie('csrftoken')
+                },
+                body: JSON.stringify({ message: texto })
+            });
+
+            const dados = await resposta.json();
+
+            if (dados.response) {
+                respostaDiv.innerHTML += `<p><strong>GPT:</strong> ${dados.response}</p>`;
+            } else {
+                respostaDiv.innerHTML += `<p><em>Erro:</em> ${dados.error}</p>`;
+            }
+
+            input.value = "";
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</head>
+<body>
+    <h1>Chat</h1>
+    <div id="resposta" style="border:1px solid #ccc; padding:10px; height:300px; overflow:auto;"></div>
+    <input type="text" id="mensagem" placeholder="Digite sua pergunta..." />
+    <button onclick="enviarMensagem()">Enviar</button>
+</body>
+</html>
